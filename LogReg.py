@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
-
 import os
-import json
+import ast
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -14,7 +13,9 @@ from PyBase import Files
 
 # initialize_with_zeros
 """
-This function creates a vector of zeros of shape (dim, 1) for w and initializes b to 0.
+This function creates a vector of zeros of shape
+ (dim_rows, dim_colums) for w
+ (dim_colums) for b.
 
 Argument:
 dim -- size of the w vector we want (or number of parameters in this case)
@@ -23,16 +24,41 @@ Returns:
 w -- initialized vector of shape (dim, 1)
 b -- initialized scalar (corresponds to the bias)
 """
-def InitializeParams(dim_rows, dim_colums):
-    w = np.zeros((dim_rows, dim_colums))
-    b = np.zeros((dim_colums))
-#    b = 0.
+def ParamsInitialize(dim_rows, dim_colums):
+    w = np.zeros(shape=(dim_rows, dim_colums))
+    b = np.zeros(shape=(dim_colums))
+
     assert(w.shape == (dim_rows, dim_colums))
     assert(b.shape == (dim_colums,))
-    #assert(isinstance(b, float) or isinstance(b, int))
 
     return w, b
 
+def ParamsSave(file_name:str, params:dict):
+    params_dic={}
+    params_dic['w'] = params['w'].tostring()#','.join(['%.f' % num for num in params['w']])
+    params_dic['w_shape'] = params['w'].shape
+
+    params_dic['b'] = params['b'].tostring()#','.join(['%.f' % num for num in params['b']])
+    params_dic['b_shape'] = params['b'].shape
+
+    text = str(params_dic)
+    Files.TextWrite(file_name, text)
+    print(str(params))
+    return
+
+
+def ParamsRead(file_name:str):
+    params_dic = ast.literal_eval(Files.TextRead(file_name))
+
+    params={}
+    params['w'] = np.fromstring(params_dic['w'])
+    params['w'] = np.reshape(params['w'] , params_dic['w_shape'] )
+
+    params['b'] = np.fromstring(params_dic['b'])
+    params['b'] = np.reshape(params['b'] , params_dic['b_shape'] )
+
+    print(str(params_dic))
+    return params
 
 
 
@@ -58,32 +84,6 @@ def sigmoid(z):
 
 
 
-def ParamsSave(file_name:str, params:dict):
-    params_dic={}
-    params_dic['w'] = params['w'].tostring()#','.join(['%.f' % num for num in params['w']])
-    params_dic['w_shape'] = params['w'].shape
-
-    params_dic['b'] = params['b'].tostring()#','.join(['%.f' % num for num in params['b']])
-    params_dic['b_shape'] = params['b'].shape
-
-    text = str(params_dic)
-    Files.TextWrite(file_name, text)
-    print(str(params))
-    return
-
-import ast
-def ParamsRead(file_name:str):
-    params_dic = ast.literal_eval(Files.TextRead(file_name))
-
-    params={}
-    params['w'] = np.fromstring(params_dic['w'])
-    params['w'] = np.reshape(params['w'] , params_dic['w_shape'] )
-
-    params['b'] = np.fromstring(params_dic['b'])
-    params['b'] = np.reshape(params['b'] , params_dic['b_shape'] )
-
-    print(str(params_dic))
-    return params
 
 
 
@@ -233,7 +233,7 @@ MODEL_PARAMS = 'parameters'
 def regression_rmodel(X_train, Y_train, X_test, Y_test, num_iterations=2000, learning_rate=0.5, print_cost=False):
     # initialize parameters with zeros (≈ 1 line of code)
     # w = w.reshape(X.shape[0], 1)
-    w, b = InitializeParams(X_train.shape[0], 1)
+    w, b = ParamsInitialize(X_train.shape[0], 1)
 
     # Gradient descent (≈ 1 line of code)
     # Returns parameters w and b, gradients and costs.
