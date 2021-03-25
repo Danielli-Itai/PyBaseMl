@@ -11,6 +11,11 @@ from PyBase import Files
 
 
 
+######################################################################
+#																	 #
+#					Logistic Regression Constants					 #
+#																	 #
+######################################################################
 PARAMS_BIAS = 'b'
 PARAMS_WEIGHTS = 'w'
 
@@ -18,7 +23,12 @@ PARAMS_WEIGHTS = 'w'
 
 
 
-# initialize_with_zeros
+######################################################################
+#																	 #
+#					Logistic Regression Parameters					 #
+#																	 #
+######################################################################
+
 """
 This function creates a vector of zeros of shape
  (dim_rows, dim_colums) for w
@@ -74,6 +84,12 @@ def ParamsRead(file_name:str):
 
 
 
+
+######################################################################
+#																	 #
+#					Logistic Regression Utilities					 #
+#																	 #
+######################################################################
 # Center and standardize your dataset.
 # meaning that you substract the mean of the whole numpy array from each example,
 # and then divide each example by the standard deviation of the whole numpy array.
@@ -81,7 +97,6 @@ def Standardise(train_set_x_flatten):
     train_set_x = (train_set_x_flatten - train_set_x_flatten.mean())/train_set_x_flatten.std()  #train_set_x = train_set_x_flatten / 255.
     assert(train_set_x.shape == train_set_x_flatten.shape)
     return train_set_x
-
 
 """
 Compute the sigmoid of z
@@ -95,11 +110,11 @@ def sigmoid(z):
 
 
 
-
-
-
-
-# propagate
+######################################################################
+#																	 #
+#					Logistic Regression Algorithem					 #
+#																	 #
+######################################################################
 """
 Implement the cost function and its gradient for the propagation explained above
 
@@ -119,11 +134,11 @@ Tips:
 """
 
 
-def propagate(w, b, X, Y):
+def propagate(weights, bias, X, Y):
     m = X.shape[1]
 
     # FORWARD PROPAGATION (FROM X TO COST)
-    A = sigmoid(np.dot(w.T, X) + b)  # compute activation
+    A = sigmoid(np.dot(weights.T, X) + bias)  # compute activation
 
     np_dot1 = np.dot(np.log(A), Y.T)
     np_dot2 = np.dot(np.log(1 - A), (1 - Y.T))
@@ -134,7 +149,7 @@ def propagate(w, b, X, Y):
     dw = np.dot(X, (A - Y).T) / m
     db = (A - Y).sum() / m
 
-    assert (dw.shape == w.shape)
+    assert (dw.shape == weights.shape)
     assert (db.dtype == float)
     cost = np.squeeze(cost)
     assert (cost.shape == ())
