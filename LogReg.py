@@ -11,6 +11,13 @@ from PyBase import Files
 
 
 
+PARAMS_BIAS = 'b'
+PARAMS_WEIGHTS = 'w'
+
+
+
+
+
 # initialize_with_zeros
 """
 This function creates a vector of zeros of shape
@@ -25,13 +32,17 @@ w -- initialized vector of shape (dim, 1)
 b -- initialized scalar (corresponds to the bias)
 """
 def ParamsInitialize(dim_rows, dim_colums):
+    params_dic = {}
     w = np.zeros(shape=(dim_rows, dim_colums))
     b = np.zeros(shape=(dim_colums))
 
     assert(w.shape == (dim_rows, dim_colums))
     assert(b.shape == (dim_colums,))
 
-    return w, b
+    params_dic[PARAMS_BIAS] = b
+    params_dic[PARAMS_WEIGHTS] = w
+
+    return params_dic
 
 def ParamsSave(file_name:str, params:dict):
     params_dic={}
@@ -113,7 +124,10 @@ def propagate(w, b, X, Y):
 
     # FORWARD PROPAGATION (FROM X TO COST)
     A = sigmoid(np.dot(w.T, X) + b)  # compute activation
-    cost = -np.sum(np.dot(np.log(A), Y.T) + np.dot(np.log(1 - A), (1 - Y.T))) / m  # compute cost
+
+    np_dot1 = np.dot(np.log(A), Y.T)
+    np_dot2 = np.dot(np.log(1 - A), (1 - Y.T))
+    cost = -np.sum(np_dot1 + np_dot2) / m  # compute cost
     cost = np.squeeze(cost)
 
     # BACKWARD PROPAGATION (TO FIND GRAD)
