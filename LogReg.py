@@ -118,7 +118,8 @@ Tips:
 - Write your code step by step for the propagation. np.log(), np.dot()
 """
 
-
+GRAD_BIAS = 'db'
+GRAD_WEIGHTS = 'dw'
 def propagate(w, b, X, Y):
     m = X.shape[1]
 
@@ -139,7 +140,7 @@ def propagate(w, b, X, Y):
     cost = np.squeeze(cost)
     assert (cost.shape == ())
 
-    grads = {"dw": dw, "db": db}
+    grads = {GRAD_WEIGHTS: dw, GRAD_BIAS: db}
 
     return grads, cost
 
@@ -190,8 +191,8 @@ def optimize(w, b, X, Y, num_iterations, learning_rate, print_cost=False):
             if print_cost:
                 print("Cost after iteration %i: %f" % (i, cost))
 
-    params = {"w": w, "b": b}
-    grads = {"dw": dw, "db": db}
+    params = {PARAMS_WEIGHTS: w, PARAMS_BIAS: b}
+    grads = {GRAD_WEIGHTS:dw, GRAD_BIAS: db}
 
     return params, grads, costs
 
@@ -207,11 +208,12 @@ Arguments:
 w -- weights, a numpy array of size (num_px * num_px * 3, 1)
 b -- bias, a scalar
 X -- data of size (num_px * num_px * 3, number of examples)
+min_prob -- minimum probability level.
 
 Returns:
 Y_prediction -- a numpy array (vector) containing all predictions (0/1) for the examples in X
 '''
-def predict(w, b, X):
+def predict(w, b, X, min_prob:float):
     m = X.shape[1]
     Y_prediction = np.zeros((1, m))
     w = w.reshape(X.shape[0], 1)
@@ -221,7 +223,7 @@ def predict(w, b, X):
 
     for i in range(A.shape[1]):
         # Convert probabilities A[0,i] to actual predictions p[0,i]
-        Y_prediction[0, i] = (A[0, i] >= 0.5)
+        Y_prediction[0, i] = (A[0, i] >= min_prob)
 
     assert (Y_prediction.shape == (1, m))
     return Y_prediction
@@ -244,18 +246,18 @@ Returns:
 d -- dictionary containing information about the model.
 """
 MODEL_PARAMS = 'parameters'
-def regression_rmodel(X_train, Y_train, X_test, Y_test, num_iterations=2000, learning_rate=0.5, print_cost=False):
+def regression_rmodel(X_train, Y_train, X_test, Y_test, num_iterations=2000, learning_rate=0.5, min_prob = 0.5, print_cost=False):
     # initialize parameters with zeros (≈ 1 line of code)
     # w = w.reshape(X.shape[0], 1)
-    w, b = ParamsInitialize(X_train.shape[0], 1)
+    params = ParamsInitialize(X_train.shape[0], 1)
 
     # Gradient descent (≈ 1 line of code)
     # Returns parameters w and b, gradients and costs.
-    parameters, grads, costs = optimize(w, b, X_train, Y_train, num_iterations, learning_rate, print_cost)
+    parameters, grads, costs = optimize(params[PARAMS_WEIGHTS], params[PARAMS_BIAS], X_train, Y_train, num_iterations, learning_rate, print_cost)
 
     # Predict test/train set examples (≈ 2 lines of code)
-    Y_prediction_test = predict(parameters["w"], parameters["b"], X_test)
-    Y_prediction_train = predict(parameters["w"], parameters["b"], X_train)
+    Y_prediction_test = predict(parameters[PARAMS_WEIGHTS], parameters[PARAMS_BIAS], X_test, min_prob)
+    Y_prediction_train = predict(parameters[PARAMS_WEIGHTS], parameters[PARAMS_BIAS], X_train, min_prob)
 
     # Print train/test Errors
     print("train accuracy: {} %".format(100 - np.mean(np.abs(Y_prediction_train - Y_train)) * 100))
@@ -289,11 +291,11 @@ def CostsPlot(costs:list, learning_rate:int, name:str, PLOTS_DIR):
 
 
 # #### Choice of learning rates ####
-def LearningRates(train_set_x, train_set_y, test_set_x, test_set_y, learning_rates):
+def LearningRates(train_set_x, train_set_y, test_set_x, test_set_y, learning_rates, min_prob):
     models = {}
     for i in learning_rates:
         print ("learning rate is: " + str(i))
-        models[str(i)] = regression_rmodel(train_set_x, train_set_y, test_set_x, test_set_y, num_iterations = 1500, learning_rate = i, print_cost = False)
+        models[str(i)] = regression_rmodel(train_set_x, train_set_y, test_set_x, test_set_y, num_iterations=1500, learning_rate=i, min_prob=min_prob, print_cost=False)
         print ('\n' + "-------------------------------------------------------" + '\n')
 
     return models
