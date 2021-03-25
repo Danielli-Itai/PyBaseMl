@@ -56,11 +56,11 @@ def ParamsInitialize(dim_rows, dim_colums):
 
 def ParamsSave(file_name:str, params:dict):
     params_dic={}
-    params_dic['w'] = params['w'].tostring()#','.join(['%.f' % num for num in params['w']])
-    params_dic['w_shape'] = params['w'].shape
+    params_dic[PARAMS_WEIGHTS] = params[PARAMS_WEIGHTS].tostring()
+    params_dic['w_shape'] = params[PARAMS_WEIGHTS].shape
 
-    params_dic['b'] = params['b'].tostring()#','.join(['%.f' % num for num in params['b']])
-    params_dic['b_shape'] = params['b'].shape
+    params_dic[PARAMS_BIAS] = params[PARAMS_BIAS].tostring()
+    params_dic['b_shape'] = params[PARAMS_BIAS].shape
 
     text = str(params_dic)
     Files.TextWrite(file_name, text)
@@ -72,11 +72,11 @@ def ParamsRead(file_name:str):
     params_dic = ast.literal_eval(Files.TextRead(file_name))
 
     params={}
-    params['w'] = np.fromstring(params_dic['w'])
-    params['w'] = np.reshape(params['w'] , params_dic['w_shape'] )
+    params[PARAMS_WEIGHTS] = np.fromstring(params_dic[PARAMS_WEIGHTS])
+    params[PARAMS_WEIGHTS] = np.reshape(params[PARAMS_WEIGHTS] , params_dic['w_shape'] )
 
-    params['b'] = np.fromstring(params_dic['b'])
-    params['b'] = np.reshape(params['b'] , params_dic['b_shape'] )
+    params[PARAMS_BIAS] = np.fromstring(params_dic[PARAMS_BIAS])
+    params[PARAMS_BIAS] = np.reshape(params[PARAMS_BIAS] , params_dic['b_shape'] )
 
     print(str(params_dic))
     return params
@@ -133,14 +133,10 @@ Tips:
 - Write your code step by step for the propagation. np.log(), np.dot()
 """
 
-<<<<<<< HEAD
 
-def propagate(weights, bias, X, Y):
-=======
 GRAD_BIAS = 'db'
 GRAD_WEIGHTS = 'dw'
-def propagate(w, b, X, Y):
->>>>>>> b0aae6f47b01b0c77e02cbec3d0b2bcbf75c2db6
+def propagate(weights, bias, X, Y):
     m = X.shape[1]
 
     # FORWARD PROPAGATION (FROM X TO COST)
