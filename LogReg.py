@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from PyBase import Files
-
+from PyBaseMl import BaseMl
 
 
 
@@ -128,7 +128,7 @@ def propagate(weights, bias, X, Y):
     m = X.shape[1]
 
     # FORWARD PROPAGATION (FROM X TO COST)
-    A = sigmoid(np.dot(weights.T, X) + bias)  # compute activation
+    A = BaseMl.sigmoid(np.dot(weights.T, X) + bias)  # compute activation
 
     np_dot1 = np.dot(np.log(A), Y.T)
     np_dot2 = np.dot(np.log(1 - A), (1 - Y.T))
@@ -223,7 +223,7 @@ def predict(w, b, X, min_prob:float):
     w = w.reshape(X.shape[0], 1)
 
     # Compute vector "A" predicting the probabilities of a cat being present in the picture
-    A = sigmoid(np.dot(w.T, X) + b)
+    A = BaseMl.sigmoid(np.dot(w.T, X) + b)
 
     for i in range(A.shape[1]):
         # Convert probabilities A[0,i] to actual predictions p[0,i]
