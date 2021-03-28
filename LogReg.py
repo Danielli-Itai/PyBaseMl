@@ -11,6 +11,11 @@ from PyBase import Files
 
 
 
+######################################################################
+#																	 #
+#					Logistic Regression Constants					 #
+#																	 #
+######################################################################
 PARAMS_BIAS = 'b'
 PARAMS_WEIGHTS = 'w'
 
@@ -18,7 +23,12 @@ PARAMS_WEIGHTS = 'w'
 
 
 
-# initialize_with_zeros
+######################################################################
+#																	 #
+#					Logistic Regression Parameters					 #
+#																	 #
+######################################################################
+
 """
 This function creates a vector of zeros of shape
  (dim_rows, dim_colums) for w
@@ -46,11 +56,11 @@ def ParamsInitialize(dim_rows, dim_colums):
 
 def ParamsSave(file_name:str, params:dict):
     params_dic={}
-    params_dic['w'] = params['w'].tostring()#','.join(['%.f' % num for num in params['w']])
-    params_dic['w_shape'] = params['w'].shape
+    params_dic[PARAMS_WEIGHTS] = params[PARAMS_WEIGHTS].tostring()
+    params_dic['w_shape'] = params[PARAMS_WEIGHTS].shape
 
-    params_dic['b'] = params['b'].tostring()#','.join(['%.f' % num for num in params['b']])
-    params_dic['b_shape'] = params['b'].shape
+    params_dic[PARAMS_BIAS] = params[PARAMS_BIAS].tostring()
+    params_dic['b_shape'] = params[PARAMS_BIAS].shape
 
     text = str(params_dic)
     Files.TextWrite(file_name, text)
@@ -62,11 +72,11 @@ def ParamsRead(file_name:str):
     params_dic = ast.literal_eval(Files.TextRead(file_name))
 
     params={}
-    params['w'] = np.fromstring(params_dic['w'])
-    params['w'] = np.reshape(params['w'] , params_dic['w_shape'] )
+    params[PARAMS_WEIGHTS] = np.fromstring(params_dic[PARAMS_WEIGHTS])
+    params[PARAMS_WEIGHTS] = np.reshape(params[PARAMS_WEIGHTS] , params_dic['w_shape'] )
 
-    params['b'] = np.fromstring(params_dic['b'])
-    params['b'] = np.reshape(params['b'] , params_dic['b_shape'] )
+    params[PARAMS_BIAS] = np.fromstring(params_dic[PARAMS_BIAS])
+    params[PARAMS_BIAS] = np.reshape(params[PARAMS_BIAS] , params_dic['b_shape'] )
 
     print(str(params_dic))
     return params
@@ -74,6 +84,12 @@ def ParamsRead(file_name:str):
 
 
 
+
+######################################################################
+#																	 #
+#					Logistic Regression Utilities					 #
+#																	 #
+######################################################################
 # Center and standardize your dataset.
 # meaning that you substract the mean of the whole numpy array from each example,
 # and then divide each example by the standard deviation of the whole numpy array.
@@ -105,13 +121,14 @@ Tips:
 - Write your code step by step for the propagation. np.log(), np.dot()
 """
 
+
 GRAD_BIAS = 'db'
 GRAD_WEIGHTS = 'dw'
-def propagate(w, b, X, Y):
+def propagate(weights, bias, X, Y):
     m = X.shape[1]
 
     # FORWARD PROPAGATION (FROM X TO COST)
-    A = sigmoid(np.dot(w.T, X) + b)  # compute activation
+    A = sigmoid(np.dot(weights.T, X) + bias)  # compute activation
 
     np_dot1 = np.dot(np.log(A), Y.T)
     np_dot2 = np.dot(np.log(1 - A), (1 - Y.T))
@@ -122,7 +139,7 @@ def propagate(w, b, X, Y):
     dw = np.dot(X, (A - Y).T) / m
     db = (A - Y).sum() / m
 
-    assert (dw.shape == w.shape)
+    assert (dw.shape == weights.shape)
     assert (db.dtype == float)
     cost = np.squeeze(cost)
     assert (cost.shape == ())
