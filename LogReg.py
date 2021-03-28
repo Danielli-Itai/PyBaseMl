@@ -83,19 +83,6 @@ def Standardise(train_set_x_flatten):
     return train_set_x
 
 
-"""
-Compute the sigmoid of z
-Arguments:  z -- A scalar or numpy array of any size.
-Return:     s -- sigmoid(z)
-"""
-def sigmoid(z):
-    s = 1/(1+np.exp(-z))
-    return s
-
-
-
-
-
 
 
 
