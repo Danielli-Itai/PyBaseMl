@@ -3,7 +3,7 @@
 import os
 import ast
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 from PyBase import Files
 from PyBaseMl import BaseMl
@@ -279,20 +279,6 @@ def regression_rmodel(X_train, Y_train, X_test, Y_test, num_iterations=2000, lea
 
 
 
-def CostsPlot(costs:list, learning_rate:int, name:str, PLOTS_DIR):
-    # Let's also plot the cost function and the gradients Plot learning curve (with costs)
-    plt.plot(costs)
-    plt.ylabel('cost')
-    plt.xlabel('iterations (per hundreds)')
-    plt.title("Learning rate =" + str(learning_rate))
-    plt.savefig(os.path.join(PLOTS_DIR, name))
-    plt.show()
-    plt.close()
-    return
-
-
-
-
 
 # #### Choice of learning rates ####
 def LearningRates(train_set_x, train_set_y, test_set_x, test_set_y, learning_rates, min_prob):
@@ -304,17 +290,3 @@ def LearningRates(train_set_x, train_set_y, test_set_x, test_set_y, learning_rat
 
     return models
 
-
-def LearningRatesCostsPlot(models:dict, learning_rates:np.array, name, PLOTS_DIR):
-    for i in learning_rates:
-        plt.plot(np.squeeze(models[str(i)]["costs"]), label= str(models[str(i)]["learning_rate"]))
-
-    plt.ylabel('cost')
-    plt.xlabel('iterations (hundreds)')
-    legend = plt.legend(loc='upper center', shadow=True)
-    frame = legend.get_frame()
-    frame.set_facecolor('0.90')
-    plt.savefig(os.path.join(PLOTS_DIR, name))
-    plt.show()
-    plt.close()
-    return

@@ -26,3 +26,5 @@ def sigmoid(z):
 
 def Accuracy(Y, Ypredicted):
     return float((np.dot(Y, Ypredicted) + np.dot(1 - Y, 1 - Ypredicted)) / float(Y.size) * 100)
+
+
